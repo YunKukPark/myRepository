@@ -1,0 +1,385 @@
+<!--chart.js관련 필수-->
+<script type="text/javascript" src="/img_up/_addon/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="/img_up/_addon/_plugin/chart/chart.bundle.min.js"></script>
+<script type="text/javascript" src="/img_up/_addon/_plugin/chart/utils.js"></script>
+<!--admin관련 js, css-->
+<script type="text/javascript" src="/admin/sub_all/admin.js"></script>
+<link rel="stylesheet" type="text/css" href="/img_up/shop_pds/aramadmin1/src_css/admin_view_lib.css">
+
+<style>
+	/* Chart.js */
+	@keyframes chartjs-render-animation{
+		from{opacity:.99}
+		to{opacity:1}
+	}
+
+	.ap_stat_day_wrap{margin:0 auto;padding:0 10px;box-sizing:border-box;width:100%;}
+
+	.btn_wrap{margin-bottom:15px;text-align:right}
+	.btn_wrap a.map_view_btn{display:inline-table;padding:12px 35px;border:1px solid #414c68;text-decoration:none;font-weight:bold;font-size:12px;color:#414c68;background-color:#fff;}
+	.btn_wrap a.map_view_btn:hover{color:#fff;background-color:#414c68}
+
+	.ap_name{position:relative;border-top:2px solid #424c67;text-align:center;color:#424c67;font-size:18px;line-height:1;padding:10px 10px 54px 10px;background-color:#f0eff4;}
+	.ap_name .ap_total{position:absolute;right:0;top:66%;transform:translateY(-50%);width:100%;text-align:center;line-height:1.4;font-size:0;}
+	.ap_name .ap_total p{display:inline-block;margin:0 10px 0 0;font-size:13px;}
+	.ap_name .ap_total p:last-child{margin-right:0;}
+	.ap_name .ap_total span{font-weight:bold;color:#424c67}
+
+	.chart_search_wrap table colgroup col:nth-child(1){width:22%}
+	.chart_search_wrap table colgroup col:nth-child(2){}
+	.chart_search_wrap table th{word-break:keep-all}
+	.btn_chart_search{margin:15px 0 0;display:table;height:100%}
+	.btn_chart_search a{display:table-cell;height:100%;}
+
+	.rg-button.rg-small:nth-child(4){background-color:#424c67;color:#fff}
+	.rg-button.rg-small:nth-child(1):hover{background-color:#f43264;color:#fff}
+	.rg-button.rg-small:nth-child(2):hover{background-color:#3779cd;color:#fff}
+	.rg-button.rg-small:nth-child(3):hover{background-color:#424c67;color:#fff}
+	.rg-button.rg-small:nth-child(4):hover{background-color:#424c67;color:#fff}
+	.rg-button.rg-small{padding:15px 10px;min-width:130px;border:1px solid #ddd;color:#666;background-color:#fff}
+	.rg-table.rg-form>tbody>tr>th{background:#f0eff4;color:#414c68}
+	#rg-search-pannel{border-top:1px solid #414c68;border-bottom:1px solid #414c68;}
+	#rg-search-pannel nav{width:100%}
+	#rg-search-pannel nav *[type='button'], #rg-search-pannel nav *[type='submit']{background-color:#414c68 !important;}
+
+	select.rg-form-text{min-width:calc(100% / 3 - 7px);height:32px;background-color:#fff !important;}
+	input[type=radio]{margin:0 3px 0 5px;vertical-align:middle;}
+	.rg-form-check.rg-inline>label{margin:0;vertical-align:middle}
+
+	.chartjs-render-monitor{animation:chartjs-render-animation 1ms}
+	.chartjs-size-monitor, .chartjs-size-monitor-expand, .chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}
+	.chartjs-size-monitor-expand > div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}
+	.chartjs-size-monitor-shrink > div{position:absolute;width:200%;height:200%;left:0;top:0}
+
+	.chart-chk-wrap{margin-bottom:40px;padding:20px 15px;text-align:center;background-color:#fff;}
+	.chartjs-hidden-iframe{display:block;overflow:hidden;border:0px;margin:0px;top:0px;left:0px;bottom:0px;right:0px;height:100%;width:100%;position:absolute;pointer-events:none;z-index:-1;}
+	.chart_canvas_wrap{position:relative;width:100%;height:300px;padding-right:0;} /*차트 사이즈*/
+	.analyser table{color:#333;font-size:14px;margin:8px 0;width:100%;}
+	.analyser table colgroup col:nth-child(1){width:33%}
+	.analyser th{padding:12px 7px;border:1px solid #ddd;word-break:keep-all;background-color:#f0eff4}
+	.analyser td{padding:5px;border:1px solid #ddd;text-align:center}
+  
+ 	.downloadButton{float:right;background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);background-color:#44c767;border-radius:5px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;font-size:17px;padding:16px 31px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;}
+
+.downloadButton:hover {
+	background:linear-gradient(to bottom, #5cbf2a 5%, #44c767 100%);
+	background-color:#5cbf2a;
+}
+.downloadButton:active {
+	position:relative;
+	top:1px;
+}
+
+
+	@media screen and (min-width:650px){
+		#rg-search-pannel nav{width:80px}
+	}
+	@media screen and (min-width:1250px){
+		.ap_stat_day_wrap{margin:0 auto;padding:0;width:1250px;}
+
+		.ap_name{padding:12px 0;font-size:26px;}
+		.ap_name .ap_total{width:auto;top:50%;right:10px;line-height:1}
+		select.rg-form-text{min-width:100px}
+		.chart_search_wrap table colgroup col:nth-child(1){width:150px}
+		#rg-search-pannel{padding-right:68px}
+		#rg-search-pannel nav{width:auto}
+
+		.analyser table colgroup col:nth-child(1){width:150px}
+	}
+</style>
+
+
+<div class="ap_stat_day_wrap">
+	<div class="btn_wrap"><a class="map_view_btn" href="/shop_contents3/gangjin_map_view.htm">지도 검색</a></div>
+
+	
+		<div class="ap_name">
+			<b>AP 기간별 통계</b>
+
+
+		</div>
+		
+		{$form_start}
+		<div class="chart_search_wrap rg-head rg-border">
+			<div id="rg-search-pannel" class="rg-top-border" style="display:none;">
+				<table class="rg-table rg-form rg-responsive" >
+					<colgroup>
+						<col>
+						<col>
+					</colgroup>
+					<tbody>					
+					<tr>
+						<th>날짜 선택</th>
+						<td>
+							<!--@if($device_os == 'ios')-->
+								<input type="date" name="s_date" value="{$s_date}" class="rg-form-text">
+								~
+								<input type="date" name="e_date" value="{$e_date}" class="rg-form-text">
+
+							<!--@else-->
+
+								<select name="s_y" class="rg-form-text">
+									<!--@for($i_y = date("Y") ; $i_y > 2019 ; $i_y--)-->
+										<option value="{$i_y}" {@if($i_y == $s_y) echo 'selected';@}>
+											{$i_y}년
+										</option>
+									<!--@end-->
+								</select>
+								<select name="s_m" class="rg-form-text">
+									<!--@for($i_m = 1 ; $i_m <= 12 ; $i_m++)-->
+										<option value="{$i_m}" {@if($i_m == $s_m) echo 'selected';@}>
+											{$i_m}월
+										</option>
+									<!--@end-->
+								</select>
+								<select name="s_d" class="rg-form-text">
+									<!--@for($i_d = 1 ; $i_d <= 31 ; $i_d++)-->
+										<option value="{$i_d}" {@if($i_d == $s_d) echo 'selected';@}>
+											{$i_d}일
+										</option>
+									<!--@end-->
+								</select>
+								~
+								<select name="e_y" class="rg-form-text">
+									<!--@for($i_y = date("Y") ; $i_y > 2019 ; $i_y--)-->
+										<option value="{$i_y}" {@if($i_y == $e_y) echo 'selected';@}>
+											{$i_y}년
+										</option>
+									<!--@end-->
+								</select>
+								<select name="e_m" class="rg-form-text">
+									<!--@for($i_m = 1 ; $i_m <= 12 ; $i_m++)-->
+										<option value="{$i_m}" {@if($i_m == $e_m) echo 'selected';@}>
+											{$i_m}월
+										</option>
+									<!--@end-->
+								</select>
+								<select name="e_d" class="rg-form-text">
+									<!--@for($i_d = 1 ; $i_d <= 31 ; $i_d++)-->
+										<option value="{$i_d}" {@if($i_d == $e_d) echo 'selected';@}>
+											{$i_d}일
+										</option>
+									<!--@end-->
+								</select>
+
+							<!--@end-->
+						</td>
+					</tr>
+					<tr>
+						<th>접속형태 선택</th>
+						<td class="rg-form-check rg-inline">
+							<input type="radio" name="associated_type" id="associated_type_ALL" value="ALL" {@ if($_GET[associated_type] == 'ALL' || !$_GET[associated_type]) echo 'checked'; @}><label for="associated_type_ALL">모두</label>
+							<input type="radio" name="associated_type" id="associated_type_Y" value="Y" {@ if($_GET[associated_type] == 'Y') echo 'checked'; @}><label for="associated_type_Y">접속자</label>
+							<input type="radio" name="associated_type" id="associated_type_N" value="N" {@ if($_GET[associated_type] == 'N') echo 'checked'; @}><label for="associated_type_N">비접속자</label>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<nav class="rg-text-center btn_chart_search">
+					<a href="{$bt_search}" class="rg-button ac-search">검색</a>
+				</nav>
+			</div>
+		</div>
+		{$form_end}
+
+
+		<div id="admin_chart_wrap">
+
+			<div class="chart_canvas_wrap">
+				<iframe class="chartjs-hidden-iframe" tabindex="-1"></iframe>
+
+				<canvas id="data-chart-canvas" class="chartjs-render-monitor"></canvas>
+				<div class="chartjs-size-monitor">
+					<div class="chartjs-size-monitor-expand">
+						<div class=""></div>
+					</div>
+					<div class="chartjs-size-monitor-shrink">
+						<div class=""></div>
+					</div>
+				</div>
+			</div>
+
+			<div id="today-data-chart-analyser" class="analyser">
+				<table id = "apTable">
+					<colgroup>
+						<col>
+						<col>
+					</colgroup>
+					<tbody>
+						<tr>
+							<th>날짜</th>
+							<th>일별 유동인구</th>
+							<th>일별 고정인구</th>
+						</tr>
+                      {@
+                      	$totalNormalCnt = 0;
+                      	$totalRegularCnt = 0;
+                      	$forAvg = 1;
+                      @}
+						<!--@foreach($data_arr as $date => $v_arr)-->
+							{@
+							$date_arr[] = $date;
+							@}
+							<tr>
+                              	<td><b>{$date}</b></td>
+								<td>{$v_arr[normal_cnt]|number}명</td>
+								<td>{$v_arr[regular_cnt]|number}명</td>
+							</tr>
+                      		{@
+                      		$totalNormalCnt += $v_arr[normal_cnt];
+							$totalRegularCnt += $v_arr[regular_cnt];
+                      		$forAvg +=1;
+                      		@}
+						<!--@end-->
+                      		<tr>
+								<td><b>합  계</b></td>
+								<td>{$totalNormalCnt|number}명</td>
+								<td>{$totalRegularCnt|number}명</td>
+							</tr>
+                      		<tr>
+								<td><b>평  균</b></td>
+								<td>{$totalNormalCnt/$forAvg|number}명</td>
+								<td>{$totalRegularCnt/$forAvg|number}명</td>
+							</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+ 			 {@
+              	$now_date = date('Y-m-d');            //다운받는 날짜
+              @}
+	 <button type="button" class="downloadButton" onclick="exportTableToCsv('apTable')">
+        .csv 다운로드
+    </button>
+</div>
+
+<!--php -> json 변환-->
+{@
+	$date_arr = json_encode($data_arr);
+	$stat1_obj = json_encode($data_arr);
+	$stat1_r_obj = json_encode($data_arr);
+@}
+<script>
+	var date_arr = $.parseJSON('{$date_arr}'); //일
+	var stat1_obj = $.parseJSON('{$stat1_obj}'); //일별 유동인구
+	var stat1_r_obj = $.parseJSON('{$stat1_r_obj}'); //일별 고정인구
+
+	var stat1_arr = [];
+	var stat1_r_arr = [];
+
+	arr_value_func(stat1_obj, stat1_arr);
+	arr_value_func(stat1_r_obj, stat1_r_arr);
+
+	function arr_value_func(obj, arr){
+		let count_idx = 0;
+
+		for(let key in obj){
+			arr[count_idx] = obj[key];
+			count_idx ++;
+		}
+	}
+
+	var chart = new Chart('data-chart-canvas', {
+		type: 'line',
+		data: {
+			labels: date_arr,
+			datasets: [{
+				backgroundColor: 'rgba(247, 49, 100, 0.1)',
+				borderColor: 'rgba(247, 49, 100, 0.1)',
+				data: stat1_arr,
+				label: '일별 유동인구',
+				fill: true
+			}, {
+				backgroundColor: 'rgba(247, 49, 100, 1)',
+				borderColor: 'rgba(247, 49, 100, 1)',
+				data: stat1_r_arr,
+				label: '일별 고정인구',
+				fill: false
+			}]
+		},
+		options: {
+			maintainAspectRatio: false,
+			spanGaps: false,
+			elements: {
+				line: {
+					tension: 0.000001
+				}
+			},
+			plugins: {
+				filler: {
+					propagate: false
+				},
+				'samples-filler-analyser': {
+					target: 'today-data-chart-analyser'
+				}
+			}
+		}
+	});
+</script>
+
+<script>
+function exportTableToCsv(tableId, filename) {
+    if (filename == null || typeof filename == undefined)
+        filename = tableId;
+    filename += ".csv";
+
+    var BOM = "\uFEFF";
+
+    var table = document.getElementById(tableId);
+    var csvString = BOM;
+    for (var rowCnt = 0; rowCnt < table.rows.length; rowCnt++) {
+        var rowData = table.rows[rowCnt].cells;
+        for (var colCnt = 0; colCnt < rowData.length; colCnt++) {
+            var columnData = rowData[colCnt].innerHTML;
+            if (columnData == null || columnData.length == 0) {
+                columnData = "".replace(/"/g, '""');
+            }
+            else {
+                columnData = columnData.toString().replace(/"/g, '""'); // escape double quotes
+            }
+            csvString = csvString + '"' + columnData + '",';
+        }
+        csvString = csvString.substring(0, csvString.length - 1);
+        csvString = csvString + "\r\n";
+    }
+    csvString = csvString.substring(0, csvString.length - 1);
+
+    // IE 10, 11, Edge Run
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+
+        var blob = new Blob([decodeURIComponent(csvString)], {
+            type: 'text/csv;charset=utf8'
+        });
+
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+
+    } else if (window.Blob && window.URL) {
+        // HTML5 Blob
+        var blob = new Blob([csvString], { type: 'text/csv;charset=utf8' });
+        var csvUrl = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.setAttribute('style', 'display:none');
+        a.setAttribute('href', csvUrl);
+        a.setAttribute('download', filename);
+        document.body.appendChild(a);
+
+        a.click()
+        a.remove();
+    } else {
+        // Data URI
+        var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csvString);
+        var blob = new Blob([csvString], { type: 'text/csv;charset=utf8' });
+        var csvUrl = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.setAttribute('style', 'display:none');
+        a.setAttribute('target', '_blank');
+        a.setAttribute('href', csvData);
+        a.setAttribute('download', filename);
+        document.body.appendChild(a);
+        a.click()
+        a.remove();
+    }
+}
+
+
+</script>
